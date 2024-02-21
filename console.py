@@ -19,15 +19,15 @@ class HBNBCommand(cmd.Cmd):
     prompt = '(hbnb) ' if sys.__stdin__.isatty() else ''
 
     classes = {
-               'BaseModel': BaseModel, 'User': User, 'Place': Place,
-               'State': State, 'City': City, 'Amenity': Amenity,
-               'Review': Review
-              }
+            'BaseModel': BaseModel, 'User': User, 'Place': Place,
+            'State': State, 'City': City, 'Amenity': Amenity,
+            'Review': Review
+            }
     dot_cmds = ['all', 'count', 'show', 'destroy', 'update']
     types = {
-             'number_rooms': int, 'number_bathrooms': int,
-             'max_guest': int, 'price_by_night': int,
-             'latitude': float, 'longitude': float
+            'number_rooms': int, 'number_bathrooms': int,
+            'max_guest': int, 'price_by_night': int,
+            'latitude': float, 'longitude': float
             }
 
     def preloop(self):
@@ -130,8 +130,9 @@ class HBNBCommand(cmd.Cmd):
             storage.save()
             return
         list_par = list_all_par[1:]
-        new_instance = HBNBCommand.classes[c_name]()
-        print(new_instance.id)
+        # new_instance = HBNBCommand.classes[c_name]()
+        # print(new_instance.id)
+        created = False
         for param in list_par:
             error = False
             if '=' in param:
@@ -153,8 +154,12 @@ class HBNBCommand(cmd.Cmd):
                         except ValueError:
                             error = True
                     if error is False:
+                        if created is False:
+                            new_instance = HBNBCommand.classes[c_name]()
+                            print(new_instance.id)
+                            created = True
                         to_up = c_name + ' ' + new_instance.id +\
-                                ' ' + name + ' ' + str(value)
+                            ' ' + name + ' ' + str(value)
                         self.do_update(to_up)
 
     def help_create(self):
