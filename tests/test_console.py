@@ -7,6 +7,7 @@ from io import StringIO
 from console import HBNBCommand
 import os
 
+
 class ConsoleTestCase(unittest.TestCase):
     """Console test case"""
 
@@ -97,6 +98,12 @@ class ConsoleTestCase(unittest.TestCase):
             self.assertFalse('user_id' in valuedic)
             self.assertFalse('=' in valuedic)
             self.assertFalse('001' in valuedic)
+
+    def test_no_good_param(self):
+        """All param are bad"""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("""create State name = "StateName""")
+        self.assertFalse(os.path.exists('file.json'))
 
 
 if __name__ == "__main__":
