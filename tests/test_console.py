@@ -27,6 +27,13 @@ class ConsoleTestCase(unittest.TestCase):
         except FileNotFoundError:
             pass
 
+    def test_normal_format(self):
+        """Normal test"""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create State")
+        obj = storage.all()
+        self.assertFalse(len(obj) == 0)
+
     def test_good_format(self):
         """ """
         with patch('sys.stdout', new=StringIO()) as f:

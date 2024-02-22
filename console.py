@@ -148,7 +148,7 @@ class HBNBCommand(cmd.Cmd):
                         created = True
                         storage.save()
                     to_up = c_name + ' ' + new_instance.id +\
-                        ' ' + param_ch[0] + ' ' + '"' + str(param_ch[1]) + '"'
+                        ' ' + param_ch[0] + ' ' + str(param_ch[1])
                     self.do_update(to_up)
         if db and len(helper_db) != 0:
             # kw = kwarg_checker(helper_db, HBNBCommand.classes[c_name])
@@ -364,7 +364,7 @@ def is_valid_param(param):
             name = list_param[0]
             value = list_param[1]
             if '"' in value:
-                value = value.replace('\"', '')
+                # value = value.replace('\"', '')
                 value = value.replace('_', ' ')
             elif '.' in value:
                 try:
