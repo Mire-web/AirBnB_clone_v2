@@ -3,7 +3,7 @@
 import cmd
 import sys
 from models.base_model import BaseModel
-from models.__init__ import storage
+from models import storage
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -125,9 +125,8 @@ class HBNBCommand(cmd.Cmd):
             return
         if args in HBNBCommand.classes:
             new_instance = HBNBCommand.classes[args]()
-            storage.save()
+            new_instance.save()
             print(new_instance.id)
-            storage.save()
             return
         list_par = list_all_par[1:]
         # new_instance = HBNBCommand.classes[c_name]()
@@ -156,6 +155,7 @@ class HBNBCommand(cmd.Cmd):
                     if error is False:
                         if created is False:
                             new_instance = HBNBCommand.classes[c_name]()
+                            new_instance.save()
                             print(new_instance.id)
                             created = True
                         to_up = c_name + ' ' + new_instance.id +\
@@ -242,11 +242,13 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
+            all_cls_ob = storage.all(HBNBCommand.classes[args])
+            for k, v in all_cls_ob.items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            all_cls_ob = storage.all()
+            for k, v in all_cls_ob.items():
                 print_list.append(str(v))
 
         print(print_list)
@@ -348,7 +350,6 @@ class HBNBCommand(cmd.Cmd):
 
                 # update dictionary with name, value pair
                 new_dict.__dict__.update({att_name: att_val})
-
         new_dict.save()  # save updates to file
 
     def help_update(self):

@@ -2,9 +2,9 @@
 """ new class for sqlAlchemy """
 from os import getenv
 from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy import (create_engine)
+from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
-from models.base_model import Base
+from models.base_model import Base, BaseModel
 from models.state import State
 from models.city import City
 from models.user import User
@@ -19,6 +19,7 @@ class DBStorage:
     __session = None
 
     def __init__(self):
+        """Engine init"""
         user = getenv("HBNB_MYSQL_USER")
         passwd = getenv("HBNB_MYSQL_PWD")
         db = getenv("HBNB_MYSQL_DB")
