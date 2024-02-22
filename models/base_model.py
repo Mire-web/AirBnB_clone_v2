@@ -47,8 +47,11 @@ class BaseModel:
         Return:
             returns a string of class name, id, and dictionary
         """
+        my = self.to_dict()
+        if '__class__' in my:
+            del my['__class__']
         return "[{}] ({}) {}".format(
-            type(self).__name__, self.id, self.__dict__)
+            type(self).__name__, self.id, my)
 
     def __repr__(self):
         """return a string representaion

@@ -2,6 +2,7 @@
 """ Console Module """
 import cmd
 import sys
+from os import getenv
 from models.base_model import BaseModel
 from models import storage
 from models.user import User
@@ -132,35 +133,30 @@ class HBNBCommand(cmd.Cmd):
         # new_instance = HBNBCommand.classes[c_name]()
         # print(new_instance.id)
         created = False
+        helper_db = {}
+        db = getenv("HBNB_TYPE_STORAGE") == "db"
         for param in list_par:
-            error = False
-            if '=' in param:
-                list_param = param.split('=')
-                if len(list_param) >= 2:
-                    name = list_param[0]
-                    # supose there is not two = in the parameter
-                    value = list_param[1]
-                    if '"' in value:
-                        value = value.replace('_', ' ')
-                    elif '.' in value:
-                        try:
-                            value = float(value)
-                        except ValueError:
-                            error = True
-                    else:
-                        try:
-                            value = int(value)
-                        except ValueError:
-                            error = True
-                    if error is False:
-                        if created is False:
-                            new_instance = HBNBCommand.classes[c_name]()
-                            new_instance.save()
-                            print(new_instance.id)
-                            created = True
-                        to_up = c_name + ' ' + new_instance.id +\
-                            ' ' + name + ' ' + str(value)
-                        self.do_update(to_up)
+            param_ch = is_valid_param(param)
+            if param_ch is not None:
+                if db:
+                    helper_db[param_ch[0]] = param_ch[1]
+                else:
+                    if created is False:
+                        new_instance = HBNBCommand.classes[c_name]()
+                        new_instance.save()
+                        print(new_instance.id)
+                        created = True
+                    to_up = c_name + ' ' + new_instance.id +\
+                        ' ' + param_ch[0] + ' ' + param_ch[1]
+                    self.do_update(to_up)
+        if db and len(helper_db) != 0:
+            # kw = kwarg_checker(helper_db, HBNBCommand.classes[c_name])
+            try:
+                new_inst = HBNBCommand.classes[c_name](**helper_db)
+                new_inst.save()
+                print(new_inst.id)
+            except Exception:
+                print("**Foreign key constrainst or missing arg**")
 
     def help_create(self):
         """ Help information for the create method """
@@ -356,6 +352,42 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
+
+def is_valid_param(param):
+    """helper"""
+    error = False
+    if '=' in param:
+        list_param = param.split('=')
+        if len(list_param) >= 2:
+            name = list_param[0]
+            value = list_param[1]
+            if '"' in value:
+                value = value.replace('\"', '')
+                value = value.replace('_', ' ')
+            elif '.' in value:
+                try:
+                    value = float(value)
+                except ValueError:
+                    error = True
+            else:
+                try:
+                    value = int(value)
+                except ValueError:
+                    error = True
+            if error is False:
+                return [name, value]
+    return None
+
+
+# def kwarg_checker(helper_db, c_name):
+    # state_att = ["name"]
+    # city_att = ["name", "state_id"]
+    # user_att = ["email","password","firstname","lastname"]
+
+    # print(c_name)
+    # print(attributs_classe)
+    # return True
 
 
 if __name__ == "__main__":
