@@ -143,12 +143,12 @@ class HBNBCommand(cmd.Cmd):
                 else:
                     if created is False:
                         new_instance = HBNBCommand.classes[c_name]()
-                        storage.save()
+                        new_instance.save()
                         print(new_instance.id)
                         created = True
                         storage.save()
                     to_up = c_name + ' ' + new_instance.id +\
-                        ' ' + param_ch[0] + ' ' + str(param_ch[1])
+                        ' ' + param_ch[0] + ' ' + '"' + str(param_ch[1]) + '"'
                     self.do_update(to_up)
         if db and len(helper_db) != 0:
             # kw = kwarg_checker(helper_db, HBNBCommand.classes[c_name])
