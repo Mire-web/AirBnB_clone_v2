@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 import uuid
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime
+from os import getenv
 
 Base = declarative_base()
 
@@ -47,11 +48,14 @@ class BaseModel:
         Return:
             returns a string of class name, id, and dictionary
         """
-        # my = self.to_dict()
-        # if '__class__' in my:
-        # del my['__class__']
-        return "[{}] ({}) {}".format(
-            type(self).__name__, self.id, self.__dict__)
+        if getenv('HBNB_TYPE_STORAGE') != 'db':
+            return "[{}] ({}) {}".format(
+                type(self).__name__, self.id, self.__dict__)
+        my = self.to_dict()
+        if '__class__' in my:
+            del my['__class__']
+            return "[{}] ({}) {}".format(
+                type(self).__name__, self.id, my)
 
     def __repr__(self):
         """return a string representaion
