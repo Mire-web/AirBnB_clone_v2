@@ -143,9 +143,10 @@ class HBNBCommand(cmd.Cmd):
                 else:
                     if created is False:
                         new_instance = HBNBCommand.classes[c_name]()
-                        new_instance.save()
+                        storage.save()
                         print(new_instance.id)
                         created = True
+                        storage.save()
                     to_up = c_name + ' ' + new_instance.id +\
                         ' ' + param_ch[0] + ' ' + str(param_ch[1])
                     self.do_update(to_up)
