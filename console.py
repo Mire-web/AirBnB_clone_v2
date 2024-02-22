@@ -147,7 +147,7 @@ class HBNBCommand(cmd.Cmd):
                         print(new_instance.id)
                         created = True
                     to_up = c_name + ' ' + new_instance.id +\
-                        ' ' + param_ch[0] + ' ' + param_ch[1]
+                        ' ' + param_ch[0] + ' ' + str(param_ch[1])
                     self.do_update(to_up)
         if db and len(helper_db) != 0:
             # kw = kwarg_checker(helper_db, HBNBCommand.classes[c_name])
