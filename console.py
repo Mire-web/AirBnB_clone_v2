@@ -152,6 +152,8 @@ class HBNBCommand(cmd.Cmd):
                     self.do_update(to_up)
         if db and len(helper_db) != 0:
             # kw = kwarg_checker(helper_db, HBNBCommand.classes[c_name])
+            for key, val in helper_db.items():
+                helper_db[key] = val.replace('"', '')
             try:
                 new_inst = HBNBCommand.classes[c_name](**helper_db)
                 new_inst.save()
