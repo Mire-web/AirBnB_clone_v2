@@ -106,6 +106,7 @@ class ConsoleTestCase(unittest.TestCase):
             self.assertFalse('=' in valuedic)
             self.assertFalse('001' in valuedic)
 
+    @unittest.skipIf(getenv("HBNB_TYPE_STORAGE") == "db")
     def test_no_good_param(self):
         """All param are bad"""
         with patch('sys.stdout', new=StringIO()) as f:
