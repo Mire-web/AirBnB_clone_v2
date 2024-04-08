@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #Setup web server for web static deployment
 
-sudo apt-get update
-sudo apt-get install nginx -y
+sudo apt-get update >/dev/null 2>&1 &
+sudo apt-get install nginx -y >/dev/null 2>&1 &
 sudo mkdir -p /data/web_static/shared/
 sudo mkdir -p /data/web_static/releases/test/
 sudo chown -R ubuntu:ubuntu /data/
