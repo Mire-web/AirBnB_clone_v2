@@ -1,41 +1,15 @@
 #!/usr/bin/env bash
-# Sets up web server for deployment of web_static.
+#Setup web server for web static deployment
 
-apt-get update
-apt-get install -y nginx
-
-mkdir -p /data/web_static/releases/test/
-mkdir -p /data/web_static/shared/
-echo "<html>
-  <head>
-  </head>
-  <body>
-    Holberton School
-  </body>
-</html>" > /data/web_static/releases/test/index.html
-ln -sf /data/web_static/releases/test/ /data/web_static/current
-
-chown -R ubuntu /data/
-chgrp -R ubuntu /data/
-
-printf %s "server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    add_header X-Served-By $HOSTNAME;
-    root   /var/www/html;
-    index  index.html index.htm;
-    location /hbnb_static {
-        alias /data/web_static/current;
-        index index.html index.htm;
-    }
-    location /redirect_me {
-        return 301 http://cuberule.com/;
-    }
-    error_page 404 /404.html;
-    location /404 {
-      root /var/www/html;
-      internal;
-    }
-}" > /etc/nginx/sites-available/default
-
-service nginx restart
+sudo apt-get update
+sudo apt-get install nginx -y
+sudo mkdir -p /data/web_static/shared/
+sudo mkdir -p /data/web_static/releases/test/
+sudo chown -R ubuntu:ubuntu /data/
+echo "It Works and Mirey made it" > /data/web_static/releases/test/index.html
+sudo ln -sf /data/web_static/releases/test /data/web_static/current
+old_string="server_name _;"
+new_string="server_name _;\\nlocation /hbnb_static {\\n\\t\\talias /data/web_static/current/;\\n\\t\\tautoindex off;\\n\\t}"
+sudo sed -i "s|$old_string|$new_string|" /etc/nginx/sites-available/default
+sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+sudo service nginx restart
