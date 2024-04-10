@@ -20,7 +20,7 @@ def do_pack():
     archive_path = (f'versions/web_static_{year}{month}{day}{hour}{minute}{second}.tgz')
     try:
         print(f'Packing web_static to {archive_path}')
-        local(f'tar -cvf {archive_path} web_static')
+        local(f'tar -cvzf {archive_path} web_static')
         file_size = stat(archive_path)
         print(f'web_static packed: {archive_path} -> {file_size.st_size}')
     except:
