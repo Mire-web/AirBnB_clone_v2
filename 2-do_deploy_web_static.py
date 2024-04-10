@@ -13,6 +13,7 @@ env.hosts = [
 ]
 
 env.user = 'ubuntu'
+env.key_filename = '~/.ssh/id_rsa'
 
 def do_pack():
     """Creates a new archive for all web_static files"""
@@ -41,17 +42,16 @@ def do_deploy(archive_path):
         basename = os.path.basename(archive_path)
         filename = os.path.basename(archive_path).split('.')[0]
         dest_path = f'/data/web_static/releases/{filename}'
-        with cd('/tmp/'):
-            put(f'{archive_path}', '/')
-            run(f'sudo mkdir -p {dest_path}')
-            run(f'sudo tar -xzf /tmp/{basename} -C {dest_path}')
-            run(f'sudo rm -f /tmp/{basename}')
-            run('sudo mv {dest_path}/web_static/* {dest_path}')
-            run('sudo rm -rf {dest_path}/web_static')
-            run('sudo rm -rf /data/web_static/current')
-            run(f'sudo ln -s {dest_path} /data/web_static/current')
-            print('New version deployed!')
-            return True
+        put(f'{archive_path}', '/tmp/')
+        run(f'sudo mkdir -p {dest_path}')
+        run(f'sudo tar -xzf /tmp/{basename} -C {dest_path}')
+        run(f'sudo rm -f /tmp/{basename}')
+        run(f'sudo mv {dest_path}/web_static/* {dest_path}')
+        run(f'sudo rm -rf {dest_path}/web_static')
+        run('sudo rm -rf /data/web_static/current')
+        run(f'sudo ln -s {dest_path} /data/web_static/current')
+        print('New version deployed!')
+        return True
     else:
         return False
     return False
