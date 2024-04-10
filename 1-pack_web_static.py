@@ -8,6 +8,7 @@ from os import stat
 
 
 def do_pack():
+    """Creates a new archive for all web_static files"""
     new_date = datetime.now()
     year = new_date.year
     month = new_date.month
