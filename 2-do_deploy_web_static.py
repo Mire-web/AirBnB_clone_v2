@@ -15,6 +15,7 @@ env.hosts = [
 env.user = 'ubuntu'
 env.key_filename = '~/.ssh/id_rsa'
 
+
 def do_pack():
     """Creates a new archive for all web_static files"""
     new_date = datetime.now()
