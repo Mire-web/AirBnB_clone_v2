@@ -38,22 +38,27 @@ def do_pack():
 
 
 def do_deploy(archive_path):
-    """Deploy static sites to all servers"""
-    if os.path.exists(archive_path):
-        basename = os.path.basename(archive_path)
-        filename = os.path.basename(archive_path).split('.')[0]
-        dest_path = f'/data/web_static/releases/{filename}'
-        put(f'{archive_path}', '/tmp/')
-        sudo(f'rm -rf {dest_path}/')
-        run(f'mkdir -p {dest_path}')
-        run(f'tar -xzf /tmp/{basename} -C {dest_path}')
-        run(f'rm -f /tmp/{basename}')
-        run(f'mv {dest_path}/web_static/* {dest_path}')
-        run(f'rm -rf {dest_path}/web_static')
-        run('rm -rf /data/web_static/current')
-        run(f'ln -s {dest_path}/ /data/web_static/current')
-        print('New version deployed!')
+    """ method doc
+        fab -f 2-do_deploy_web_static.py do_deploy:
+        archive_path=versions/web_static_20231004201306.tgz
+        -i ~/.ssh/id_rsa -u ubuntu
+    """
+    try:
+        if not os.path.exists(archive_path):
+            return False
+        fn_with_ext = os.path.basename(archive_path)
+        fn_no_ext, ext = os.path.splitext(fn_with_ext)
+        dpath = "/data/web_static/releases/"
+        put(archive_path, "/tmp/")
+        run("rm -rf {}{}/".format(dpath, fn_no_ext))
+        run("mkdir -p {}{}/".format(dpath, fn_no_ext))
+        run("tar -xzf /tmp/{} -C {}{}/".format(fn_with_ext, dpath, fn_no_ext))
+        run("rm /tmp/{}".format(fn_with_ext))
+        run("mv {0}{1}/web_static/* {0}{1}/".format(dpath, fn_no_ext))
+        run("rm -rf {}{}/web_static".format(dpath, fn_no_ext))
+        run("rm -rf /data/web_static/current")
+        run("ln -s {}{}/ /data/web_static/current".format(dpath, fn_no_ext))
+        print("New version deployed!")
         return True
-    else:
+    except Exception:
         return False
-    return False
