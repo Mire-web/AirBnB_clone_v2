@@ -50,8 +50,8 @@ def do_deploy(archive_path):
         run(f'rm -f /tmp/{basename}')
         run(f'mv {dest_path}/web_static/* {dest_path}')
         run(f'rm -rf {dest_path}/web_static')
-        run('rm -rf /data/web_static/current')
-        run(f'ln -s {dest_path}/ /data/web_static/current')
+        run('rm -rf /data/web_static/current/')
+        run(f'ln -s {dest_path}/ /data/web_static/current/')
         print('New version deployed!')
         return True
     else:
