@@ -57,6 +57,7 @@ def do_deploy(archive_path):
         return True
     return False
 
+
 def deploy():
     """Deploy web static to all servers"""
     archive_path = do_pack()
