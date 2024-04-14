@@ -46,7 +46,7 @@ def do_deploy(archive_path):
         put(f'{archive_path}', '/tmp/')
         sudo(f'rm -rf {dest_path}/')
         run(f'mkdir -p {dest_path}')
-        run(f'tar -xzf /tmp/{basename} -C {dest_path}')
+        run(f'tar -xzf /tmp/{basename} -C {dest_path}/')
         run(f'rm -f /tmp/{basename}')
         run(f'mv {dest_path}/web_static/* {dest_path}')
         run(f'rm -rf {dest_path}/web_static')
