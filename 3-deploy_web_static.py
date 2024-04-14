@@ -1,75 +1,65 @@
 #!/usr/bin/python3
-# Fabfile to create and distribute an archive to web server.
-import os.path
+"""
+Create Archive from web_static folder
+"""
+from fabric.api import *
 from datetime import datetime
-from fabric.api import env
-from fabric.api import local
-from fabric.api import put
-from fabric.api import run
+from os import stat
+import os
 
-env.hosts = ["54.237.25.65", "52.87.230.182"]
+env.hosts = [
+    '54.237.104.154',
+    '18.206.206.79'
+]
+
+env.user = 'ubuntu'
+env.key_filename = '~/.ssh/id_rsa'
 
 
 def do_pack():
-    """Create a tar gzipped archive of the directory web_static."""
-    dt = datetime.utcnow()
-    file = "versions/web_static_{}{}{}{}{}{}.tgz".format(dt.year,
-                                                         dt.month,
-                                                         dt.day,
-                                                         dt.hour,
-                                                         dt.minute,
-                                                         dt.second)
-    if os.path.isdir("versions") is False:
-        if local("mkdir -p versions").failed is True:
-            return None
-    if local("tar -cvzf {} web_static".format(file)).failed is True:
+    """Creates a new archive for all web_static files"""
+    new_date = datetime.now()
+    year = new_date.year
+    month = new_date.month
+    day = new_date.day
+    hour = new_date.hour
+    minute = new_date.minute
+    second = new_date.second
+    dt_string = f'{year}{month}{day}{hour}{minute}{second}'
+    local('mkdir -p versions')
+    archive_path = (f'versions/web_static_{dt_string}.tgz')
+    try:
+        print(f'Packing web_static to {archive_path}')
+        local(f'tar -cvzf {archive_path} web_static')
+        file_size = stat(archive_path)
+        print(f'web_static packed: {archive_path} -> {file_size.st_size}')
+        return archive_path
+    except Exception:
         return None
-    return file
 
 
 def do_deploy(archive_path):
-    """Distributes an archive to a web server.
-    Args:
-        archive_path (str): The path of the archive to distribute.
-    Returns:
-        If the file doesn't exist at archive_path or an error occurs - False.
-        Otherwise - True.
-    """
-    if os.path.isfile(archive_path) is False:
-        return False
-    file = archive_path.split("/")[-1]
-    name = file.split(".")[0]
-
-    if put(archive_path, "/tmp/{}".format(file)).failed is True:
-        return False
-    if run("rm -rf /data/web_static/releases/{}/".
-           format(name)).failed is True:
-        return False
-    if run("mkdir -p /data/web_static/releases/{}/".
-           format(name)).failed is True:
-        return False
-    if run("tar -xzf /tmp/{} -C /data/web_static/releases/{}/".
-           format(file, name)).failed is True:
-        return False
-    if run("rm /tmp/{}".format(file)).failed is True:
-        return False
-    if run("mv /data/web_static/releases/{}/web_static/* "
-           "/data/web_static/releases/{}/".format(name, name)).failed is True:
-        return False
-    if run("rm -rf /data/web_static/releases/{}/web_static".
-           format(name)).failed is True:
-        return False
-    if run("rm -rf /data/web_static/current").failed is True:
-        return False
-    if run("ln -s /data/web_static/releases/{}/ /data/web_static/current".
-           format(name)).failed is True:
-        return False
-    return True
-
+    """Deploy static sites to all servers"""
+    if os.path.exists(archive_path):
+        basename = os.path.basename(archive_path)
+        filename = os.path.basename(archive_path).split('.')[0]
+        dest_path = f'/data/web_static/releases/{filename}'
+        put(f'{archive_path}', '/tmp/')
+        sudo(f'rm -rf {dest_path}/')
+        run(f'mkdir -p {dest_path}')
+        run(f'tar -xzf /tmp/{basename} -C {dest_path}')
+        run(f'rm -f /tmp/{basename}')
+        run(f'mv {dest_path}/web_static/* {dest_path}')
+        run(f'rm -rf {dest_path}/web_static')
+        run('rm -rf /data/web_static/current')
+        run(f'ln -s {dest_path}/ /data/web_static/current')
+        print('New version deployed!')
+        return True
+    return False
 
 def deploy():
-    """Create and distribute an archive to a web server."""
-    file = do_pack()
-    if file is None:
+    """Deploy web static to all servers"""
+    archive_path = do_pack()
+    if not archive_path:
         return False
-    return do_deploy(file)
+    return do_deploy(archive_path)
