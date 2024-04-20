@@ -25,6 +25,7 @@ def ctext(text):
 
 
 @app.route('/python', defaults={'text': 'is cool'})
+@app.route('/python/', defaults={'text': 'is cool'})
 @app.route('/python/<text>')
 def pythontext(text):
     if text:
