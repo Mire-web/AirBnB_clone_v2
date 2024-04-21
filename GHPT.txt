@@ -1,7 +1,0 @@
-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
-
-expiry march 10th 2024
-
-persist filemode permission
-
-git config core.filemode true
