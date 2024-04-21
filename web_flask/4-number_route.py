@@ -34,9 +34,10 @@ def pythontext(text):
         return f"Python {text}"
 
 
-@app.route(f'/number/{int(<n>)}', strict_slashes=False)
+@app.route(f'/number/<int:n>', strict_slashes=False)
 def displayNumber(n):
-    return f"{n} is a number"
+    if int(n):
+        return f"{n} is a number"
 
 
 if __name__ == '__main__':
