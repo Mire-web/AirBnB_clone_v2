@@ -69,3 +69,8 @@ class FileStorage:
                 if myval_dic['id'] == obj.id:
                     del FileStorage.__objects[key]
                     break
+
+
+    def close(self):
+        """Call reload function"""
+        reload()
