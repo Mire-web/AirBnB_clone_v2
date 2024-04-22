@@ -70,7 +70,6 @@ class FileStorage:
                     del FileStorage.__objects[key]
                     break
 
-
     def close(self):
         """Call reload function"""
         reload()
