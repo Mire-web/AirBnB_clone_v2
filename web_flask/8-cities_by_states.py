@@ -22,6 +22,14 @@ def list_state():
     return render_template('7-states_list.html', states=states)
 
 
+@app.route('/cities_by_states', strict_slashes=False)
+def list_cities_by_state():
+    cities = storage.all("City")
+    states = storage.all("State")
+    return render_template('8-cities_by_states.html',
+                           states=states, cities=cities)
+
+
 @app.teardown_appcontext
 def clean_up(error=None):
     storage.close()
